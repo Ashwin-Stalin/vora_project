@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+        }
+
+        #recordBtn {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            border: none;
+            background-color: #e74c3c;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: transform 0.1s, background-color 0.3s;
+            
+            /* CRITICAL FOR MOBILE: Stops the copy/paste menu on long press */
+            user-select: none; 
+            -webkit-user-select: none;
+            -webkit-touch-callout: none; 
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* handle the "active" visual state in JavaScript now */
+        #status {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #34495e;
+            text-align: center;
+            padding: 0 20px;
+        }
+    </style>
+</head>
+<body>
+    <button id="recordBtn">HOLD TO<br>SPEAK</button>
+    <p id="status">Status: Idle</p>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+
+        const btn = document.getElementById('recordBtn');
+        const status = document.getElementById('status');
+
+        async function startRecording(e) {
+            e.preventDefault(); // Prevents the mobile browser from doing default touch actions
+            
+            // Prevent firing twice if they tap weirdly
+            if (mediaRecorder && mediaRecorder.state === "recording") return; 
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = event => audioChunks.push(event.data);
+                mediaRecorder.onstop = sendAudio;
+                
+                audioChunks = [];
+                mediaRecorder.start();
+                
+                status.innerText = "Status: Recording...";
+                btn.style.backgroundColor = "#c0392b"; // Darken button
+                btn.style.transform = "scale(0.95)";   // Shrink button
+            } catch (err) {
+                status.innerText = "Microphone access denied or failed.";
+            }
+        }
+
+        function stopRecording(e) {
+            e.preventDefault();
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+                status.innerText = "Status: Processing...";
+                btn.style.backgroundColor = "#e74c3c"; // Reset color
+                btn.style.transform = "scale(1)";      // Reset size
+            }
+        }
+
+        async function sendAudio() {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            const formData = new FormData();
+            formData.append('file', audioBlob);
+
+            try {
+                const response = await fetch('/upload', { method: 'POST', body: formData });
+                const data = await response.json();
+                if (data.status === "success") {
+                    status.innerText = "Command: " + data.text;
+                } else {
+                    status.innerText = "Error: " + data.message;
+                }
+            } catch (err) {
+                status.innerText = "Failed to send audio to server.";
+            }
+        }
+
+        // Desktop
+        btn.addEventListener('mousedown', startRecording);
+        btn.addEventListener('mouseup', stopRecording);
+        btn.addEventListener('mouseleave', stopRecording); // Stop if mouse drags off button
+
+        // Mobile Phone
+        btn.addEventListener('touchstart', startRecording, { passive: false });
+        btn.addEventListener('touchend', stopRecording, { passive: false });
+        btn.addEventListener('touchcancel', stopRecording, { passive: false }); // Stop if a phone call interrupts
+    </script>
+</body>
+</html>
