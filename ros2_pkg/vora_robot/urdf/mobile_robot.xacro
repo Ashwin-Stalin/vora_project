@@ -1,0 +1,119 @@
+<?xml version="1.0" ?>
+<robot name="robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find vora_robot)/urdf/materials.xacro" />
+<xacro:include filename="$(find vora_robot)/urdf/mobile_robot.gazebo" />
+
+<link name="base_footprint"> </link>
+
+<joint name="body_link_joint" type="fixed">
+  <origin xyz="0 0 0.02" rpy="0 0 0"/> 
+  <parent link="base_footprint"/>
+  <child link="body_link"/>
+</joint>
+
+<link name="body_link">
+  <inertial>
+    <origin xyz="0.004277981482528393 0.0 0.053736790419557784" rpy="0 0 0"/>
+    <mass value="17.34053789227228"/>
+    <inertia ixx="0.059622" iyy="0.064057" izz="0.110002" ixy="-0.0" iyz="0.0" ixz="-0.003246"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find vora_robot)/meshes/body_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision> 
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find vora_robot)/meshes/body_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="left_wheel">
+  <inertial>
+    <origin xyz="5.790023100122031e-18 0.012500000000000011 0.0" rpy="0 0 0"/>
+    <mass value="1.5413438956674914"/>
+    <inertia ixx="0.001044" iyy="0.001927" izz="0.001044" ixy="0.0" iyz="0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.0 -0.1 -0.05" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find vora_robot)/meshes/left_wheel.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+    <geometry>
+      <cylinder radius="0.05" length="0.04"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="right_wheel">
+  <inertial>
+    <origin xyz="-5.790023100122029e-18 -0.012499999999999997 0.0" rpy="0 0 0"/>
+    <mass value="1.541343895667492"/>
+    <inertia ixx="0.001044" iyy="0.001927" izz="0.001044" ixy="-0.0" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.0 0.1 -0.05" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find vora_robot)/meshes/right_wheel.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="black"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+    <geometry>
+      <cylinder radius="0.05" length="0.04"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="lidar">
+  <inertial>
+    <origin xyz="0.0 0.0 0.009999999999999981" rpy="0 0 0"/>
+    <mass value="0.10730836201637083"/>
+    <inertia ixx="9e-06" iyy="9e-06" izz="1.2e-05" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.05 -0.0 -0.12" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find vora_robot)/meshes/lidar.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="blue"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.05 -0.0 -0.12" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find vora_robot)/meshes/lidar.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="left_wheel_joint" type="continuous">
+  <origin xyz="0.0 0.1 0.05" rpy="0 0 0"/>
+  <parent link="body_link"/>
+  <child link="left_wheel"/>
+  <axis xyz="0.0 1.0 0.0"/>
+</joint>
+
+<joint name="right_wheel_joint" type="continuous">
+  <origin xyz="0.0 -0.1 0.05" rpy="0 0 0"/>
+  <parent link="body_link"/>
+  <child link="right_wheel"/>
+  <axis xyz="0.0 1.0 0.0"/> 
+</joint>
+
+<joint name="lidar_joint" type="fixed"> 
+  <origin xyz="0.05 0.0 0.12" rpy="0 0 0"/>
+  <parent link="body_link"/>
+  <child link="lidar"/>
+</joint>
+
+</robot>
