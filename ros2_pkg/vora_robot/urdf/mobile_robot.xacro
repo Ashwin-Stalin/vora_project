@@ -4,11 +4,11 @@
 <xacro:include filename="$(find vora_robot)/urdf/materials.xacro" />
 <xacro:include filename="$(find vora_robot)/urdf/mobile_robot.gazebo" />
 
-<link name="base_footprint"> </link>
+<link name="base_link"> </link>
 
 <joint name="body_link_joint" type="fixed">
   <origin xyz="0 0 0.02" rpy="0 0 0"/> 
-  <parent link="base_footprint"/>
+  <parent link="base_link"/>
   <child link="body_link"/>
 </joint>
 
@@ -76,11 +76,6 @@
 </link>
 
 <link name="lidar">
-  <inertial>
-    <origin xyz="0.0 0.0 0.009999999999999981" rpy="0 0 0"/>
-    <mass value="0.10730836201637083"/>
-    <inertia ixx="9e-06" iyy="9e-06" izz="1.2e-05" ixy="-0.0" iyz="0.0" ixz="-0.0"/>
-  </inertial>
   <visual>
     <origin xyz="-0.05 -0.0 -0.12" rpy="0 0 0"/>
     <geometry>
@@ -88,12 +83,6 @@
     </geometry>
     <material name="blue"/>
   </visual>
-  <collision>
-    <origin xyz="-0.05 -0.0 -0.12" rpy="0 0 0"/>
-    <geometry>
-      <mesh filename="file://$(find vora_robot)/meshes/lidar.stl" scale="0.001 0.001 0.001"/>
-    </geometry>
-  </collision>
 </link>
 
 <joint name="left_wheel_joint" type="continuous">
