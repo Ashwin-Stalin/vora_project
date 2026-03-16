@@ -7,10 +7,10 @@ from config import host, port, ffmpeg_bin_folder
 
 os.environ["PATH"] += os.pathsep + ffmpeg_bin_folder
 from pydub import AudioSegment
+from pydub.utils import which
 
-AudioSegment.converter = ffmpeg_bin_folder + r"\ffmpeg.exe"
-AudioSegment.ffmpeg = ffmpeg_bin_folder + r"\ffmpeg.exe"
-AudioSegment.ffprobe = ffmpeg_bin_folder + r"\ffprobe.exe"
+AudioSegment.converter = which("ffmpeg")
+AudioSegment.ffprobe = which("ffprobe")
 
 app = Flask(__name__)
 recognizer = sr.Recognizer()
