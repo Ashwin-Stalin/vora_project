@@ -70,3 +70,15 @@ VORA - Voice Operated Robotic Assistant
     ```bash
     ros2 run nav2_map_server map_saver_cli -f my_map --ros-args -p use_sim_time:=true
     ```
+
+## To move robot to Class A or B by terminal
+
+1. Change permission to `deliver.py` which is in folder `scripts`
+    ```bash
+    chmod +x deliver.py
+    ```
+
+2. Now run the file
+    ```bash
+    python deliver.py
+    ```
